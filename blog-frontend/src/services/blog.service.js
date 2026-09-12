@@ -1,8 +1,11 @@
 import api from "../utils/api";
 
 export const blogService = {
-    getAllBlogs: async ({ title, category } = {}) => {
+    getAllBlogs: async ({ title, category, id } = {}) => {
         const params = new URLSearchParams();
+        if (id && /^\d+$/.test(String(id))) {
+            params.append("id", String(id));
+        }
         if (title && title.trim()) {
             params.append("title", title.trim());
         }

@@ -51,14 +51,15 @@ const NavbarContent = () => {
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         const trimmed = searchQuery.trim();
+        const searchKey = /^\d+$/.test(trimmed) ? "id" : "title";
         if (pathname === "/") {
             const currentCat = searchParams.get("category");
             const params = new URLSearchParams();
-            if (trimmed) params.set("title", trimmed);
+            if (trimmed) params.set(searchKey, trimmed);
             if (currentCat) params.set("category", currentCat);
             router.push(`/?${params.toString()}`);
         } else {
-            router.push(`/?title=${encodeURIComponent(trimmed)}`);
+            router.push(trimmed ? `/?${searchKey}=${encodeURIComponent(trimmed)}` : "/");
         }
     };
 
@@ -91,7 +92,7 @@ const NavbarContent = () => {
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search blogs by title..."
+                                placeholder="Search by title or blog ID..."
                                 className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                             />
                         </form>
@@ -142,8 +143,8 @@ const NavbarContent = () => {
                                                 </p>
                                                 <span
                                                     className={`inline-block mt-1 px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${isAdmin
-                                                            ? "bg-purple-100 text-purple-700"
-                                                            : "bg-emerald-100 text-emerald-700"
+                                                        ? "bg-purple-100 text-purple-700"
+                                                        : "bg-emerald-100 text-emerald-700"
                                                         }`}
                                                 >
                                                     {user?.role || "user"}
@@ -203,7 +204,7 @@ const NavbarContent = () => {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search blogs by title..."
+                            placeholder="Search by title or blog ID..."
                             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         />
                     </form>

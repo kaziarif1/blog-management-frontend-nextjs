@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 import { Navbar } from "../components/Navbar";
 import { BlogCard } from "../components/BlogCard";
-import { SearchBar } from "../components/SearchBar";
 import { CategoryFilter } from "../components/CategoryFilter";
 import { CardSkeleton } from "../components/Loader";
 import { Alert } from "../components/Alert";
@@ -17,19 +16,13 @@ function HomeContent() {
     const router = useRouter();
 
     const titleParam = searchParams.get("title") || "";
+    const idParam = searchParams.get("id") || "";
     const categoryParam = searchParams.get("category") || "";
 
     const [blogs, setBlogs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [categories, setCategories] = useState([]);
-    const [searchTerm, setSearchTerm] = useState(titleParam);
-
-    // Sync input with searchParam
-    useEffect(() => {
-        setSearchTerm(titleParam);
-    }, [titleParam]);
-
     useEffect(() => {
         const loadCategories = async () => {
             try {
@@ -51,6 +44,7 @@ function HomeContent() {
         try {
             const data = await blogService.getAllBlogs({
                 title: titleParam,
+                id: idParam,
                 category: categoryParam,
             });
             setBlogs(Array.isArray(data) ? data : []);
@@ -59,28 +53,21 @@ function HomeContent() {
         } finally {
             setIsLoading(false);
         }
-    }, [titleParam, categoryParam]);
+    }, [titleParam, idParam, categoryParam]);
 
     useEffect(() => {
         fetchBlogs();
     }, [fetchBlogs]);
 
-    const handleSearch = (term) => {
-        const params = new URLSearchParams();
-        if (term && term.trim()) params.set("title", term.trim());
-        if (categoryParam) params.set("category", categoryParam);
-        router.push(`/?${params.toString()}`);
-    };
-
     const handleSelectCategory = (cat) => {
         const params = new URLSearchParams();
         if (titleParam) params.set("title", titleParam);
+        if (idParam) params.set("id", idParam);
         if (cat && cat !== "All") params.set("category", cat);
         router.push(`/?${params.toString()}`);
     };
 
     const handleResetFilters = () => {
-        setSearchTerm("");
         router.push("/");
     };
 
@@ -102,15 +89,6 @@ function HomeContent() {
                         Discover insightful articles written by our community on software engineering, testing, automation, and modern web development.
                     </p>
 
-                    {/* Integrated Search Bar */}
-                    <div className="mt-8 max-w-xl mx-auto shadow-sm">
-                        <SearchBar
-                            value={searchTerm}
-                            onChange={setSearchTerm}
-                            onSearch={handleSearch}
-                            placeholder="Search by blog title (e.g. Playwright, Testing)..."
-                        />
-                    </div>
                 </div>
             </section>
 
@@ -122,7 +100,7 @@ function HomeContent() {
                         <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500">
                             Categories
                         </h2>
-                        {(titleParam || categoryParam) && (
+                        {(titleParam || idParam || categoryParam) && (
                             <button
                                 onClick={handleResetFilters}
                                 className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center"
@@ -140,11 +118,12 @@ function HomeContent() {
                 </div>
 
                 {/* Filter info banner */}
-                {(titleParam || categoryParam) && (
+                {(titleParam || idParam || categoryParam) && (
                     <div className="mb-6 p-3 bg-gray-50 rounded-xl border border-gray-200/70 flex items-center justify-between text-xs text-gray-600">
                         <span>
                             Showing results for:{" "}
                             {titleParam && <strong className="text-gray-900 mr-2">&quot;{titleParam}&quot;</strong>}
+                            {idParam && <strong className="text-gray-900 mr-2">Blog #{idParam}</strong>}
                             {categoryParam && (
                                 <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-semibold">
                                     {categoryParam}
@@ -183,11 +162,11 @@ function HomeContent() {
                         </div>
                         <h3 className="text-lg font-bold text-gray-900">No blogs found</h3>
                         <p className="text-sm text-gray-500 mt-1 leading-relaxed">
-                            {titleParam || categoryParam
+                            {titleParam || idParam || categoryParam
                                 ? "We couldn't find any articles matching your search or category filter. Try clearing filters or searching for something else."
                                 : "There are currently no blogs published yet. Be the first to share your thoughts!"}
                         </p>
-                        {(titleParam || categoryParam) && (
+                        {(titleParam || idParam || categoryParam) && (
                             <button
                                 onClick={handleResetFilters}
                                 className="mt-5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors"

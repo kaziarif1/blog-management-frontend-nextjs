@@ -15,8 +15,12 @@ export const createBlog = async (userId, { blogTitle, blog, category }) => {
     return Blog.create({ userId, blogTitle, blog, category });
 };
 
-export const getAllBlogs = async ({ title, category }) => {
+export const getAllBlogs = async ({ title, category, id }) => {
     const where = {};
+
+    if (id && /^\d+$/.test(String(id))) {
+        where.id = Number(id);
+    }
 
     if (title) {
         where.blogTitle = { [Op.like]: `%${title}%` };
