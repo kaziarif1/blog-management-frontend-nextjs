@@ -8,15 +8,9 @@ import {
     Search,
     Menu,
     X,
-    User,
     LogOut,
-    LayoutDashboard,
-    FileText,
-    KeyRound,
-    Users,
     ChevronDown,
     PlusCircle,
-    Shield,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { getImageUrl, getUserFullName } from "../utils/formatters";
@@ -147,54 +141,13 @@ const NavbarContent = () => {
                                                     {user?.email}
                                                 </p>
                                                 <span
-                                                    className={`inline-block mt-1 px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${
-                                                        isAdmin
+                                                    className={`inline-block mt-1 px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${isAdmin
                                                             ? "bg-purple-100 text-purple-700"
                                                             : "bg-emerald-100 text-emerald-700"
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {user?.role || "user"}
                                                 </span>
-                                            </div>
-
-                                            <div className="py-1">
-                                                <Link
-                                                    href="/dashboard"
-                                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors"
-                                                >
-                                                    <LayoutDashboard className="w-4 h-4 mr-2.5 text-gray-400" />
-                                                    Dashboard
-                                                </Link>
-                                                <Link
-                                                    href="/dashboard/blogs"
-                                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors"
-                                                >
-                                                    <FileText className="w-4 h-4 mr-2.5 text-gray-400" />
-                                                    My Blogs
-                                                </Link>
-                                                {isAdmin && (
-                                                    <Link
-                                                        href="/admin/users"
-                                                        className="flex items-center px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 transition-colors font-medium"
-                                                    >
-                                                        <Users className="w-4 h-4 mr-2.5 text-purple-500" />
-                                                        User Management
-                                                    </Link>
-                                                )}
-                                                <Link
-                                                    href="/dashboard/profile"
-                                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors"
-                                                >
-                                                    <User className="w-4 h-4 mr-2.5 text-gray-400" />
-                                                    Profile Settings
-                                                </Link>
-                                                <Link
-                                                    href="/dashboard/change-password"
-                                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors"
-                                                >
-                                                    <KeyRound className="w-4 h-4 mr-2.5 text-gray-400" />
-                                                    Change Password
-                                                </Link>
                                             </div>
 
                                             <div className="pt-1 border-t border-gray-100">
@@ -280,50 +233,6 @@ const NavbarContent = () => {
                             </div>
 
                             <div className="space-y-1">
-                                <Link
-                                    href="/dashboard"
-                                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl"
-                                >
-                                    <LayoutDashboard className="w-4 h-4 mr-3 text-gray-400" />
-                                    Dashboard
-                                </Link>
-                                <Link
-                                    href="/dashboard/blogs"
-                                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl"
-                                >
-                                    <FileText className="w-4 h-4 mr-3 text-gray-400" />
-                                    My Blogs
-                                </Link>
-                                <Link
-                                    href="/dashboard/blogs/create"
-                                    className="flex items-center px-3 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-xl"
-                                >
-                                    <PlusCircle className="w-4 h-4 mr-3 text-emerald-600" />
-                                    Create New Blog
-                                </Link>
-                                {isAdmin && (
-                                    <Link
-                                        href="/admin/users"
-                                        className="flex items-center px-3 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50 rounded-xl"
-                                    >
-                                        <Shield className="w-4 h-4 mr-3 text-purple-600" />
-                                        Admin User Management
-                                    </Link>
-                                )}
-                                <Link
-                                    href="/dashboard/profile"
-                                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl"
-                                >
-                                    <User className="w-4 h-4 mr-3 text-gray-400" />
-                                    Profile Settings
-                                </Link>
-                                <Link
-                                    href="/dashboard/change-password"
-                                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl"
-                                >
-                                    <KeyRound className="w-4 h-4 mr-3 text-gray-400" />
-                                    Change Password
-                                </Link>
                                 <button
                                     onClick={logout}
                                     className="w-full flex items-center px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-xl text-left"
