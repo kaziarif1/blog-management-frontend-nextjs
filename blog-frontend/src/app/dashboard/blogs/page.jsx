@@ -153,8 +153,8 @@ function BlogManagementContent() {
                         <button
                             onClick={() => setSelectedTab("all")}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedTab === "all"
-                                    ? "bg-white text-gray-900 shadow-sm"
-                                    : "text-gray-500 hover:text-gray-900"
+                                ? "bg-white text-gray-900 shadow-sm"
+                                : "text-gray-500 hover:text-gray-900"
                                 }`}
                         >
                             All Platform Blogs ({blogs.length})
@@ -162,8 +162,8 @@ function BlogManagementContent() {
                         <button
                             onClick={() => setSelectedTab("my")}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedTab === "my"
-                                    ? "bg-white text-gray-900 shadow-sm"
-                                    : "text-gray-500 hover:text-gray-900"
+                                ? "bg-white text-gray-900 shadow-sm"
+                                : "text-gray-500 hover:text-gray-900"
                                 }`}
                         >
                             My Blogs (
@@ -236,7 +236,9 @@ function BlogManagementContent() {
                                             >
                                                 {blog.blogTitle}
                                             </Link>
-                                            <p className="text-xs text-gray-500 mt-1">{blog.category || "General"}</p>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Blog #{blog.id} · {blog.category || "General"}
+                                            </p>
                                         </div>
                                         {isEditable && (
                                             <div className="flex items-center space-x-1 shrink-0">
@@ -294,6 +296,9 @@ function BlogManagementContent() {
                                         return (
                                             <tr key={blog.id} className="hover:bg-gray-50/60 transition-colors">
                                                 <td className="py-4 pl-6 pr-3 max-w-xs sm:max-w-sm">
+                                                    <p className="text-[11px] font-semibold text-gray-400 mb-0.5">
+                                                        Blog #{blog.id}
+                                                    </p>
                                                     <Link
                                                         href={`/blogs/${blog.id}`}
                                                         className="font-bold text-gray-900 hover:text-emerald-600 transition-colors line-clamp-1 flex items-center group"

@@ -26,6 +26,9 @@ export const BlogCard = ({
                         <Tag className="w-3 h-3 mr-1" />
                         {blog.category || "General"}
                     </span>
+                    <span className="text-[11px] font-semibold text-gray-400 whitespace-nowrap">
+                        Blog #{blog.id}
+                    </span>
 
                     {showActions && (
                         <div className="flex items-center space-x-1 opacity-90">

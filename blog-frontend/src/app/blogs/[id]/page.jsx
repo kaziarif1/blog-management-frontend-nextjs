@@ -143,6 +143,9 @@ export default function BlogDetailsPage() {
                         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
                             {blog.blogTitle}
                         </h1>
+                        <p className="text-xs font-semibold text-gray-400 mb-6">
+                            Blog #{blog.id}
+                        </p>
 
                         {/* Author Card */}
                         <div className="flex items-center space-x-3.5 pb-6 border-b border-gray-100 mb-8">
