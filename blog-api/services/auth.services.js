@@ -1,10 +1,57 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 import { User } from "../models/index.js";
 import { validateEmail } from "../utils/validateEmail.js";
 import { validatePassword, isNonEmptyString, MIN_PASSWORD_LENGTH } from "../utils/validateFields.js";
 
 const SALT_ROUNDS = 10;
+
+const createMailer = () => {
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
+
+    if (!emailUser || !emailPass) {
+        const error = new Error("Gmail SMTP credentials are not configured. Set EMAIL_USER and EMAIL_PASS in your .env file.");
+        error.statusCode = 500;
+        throw error;
+    }
+
+    return nodemailer.createTransport({
+        host: process.env.EMAIL_HOST || "smtp.gmail.com",
+        port: Number(process.env.EMAIL_PORT || 587),
+        secure: Number(process.env.EMAIL_PORT || 587) === 465,
+        auth: {
+            user: emailUser,
+            pass: emailPass,
+        },
+    });
+};
+
+const sendPasswordResetEmail = async (toEmail, resetLink) => {
+    const transporter = createMailer();
+    const from = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+
+    await transporter.sendMail({
+        from,
+        to: toEmail,
+        subject: "Reset your password",
+        html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937;">
+                <h2 style="margin-bottom: 12px;">Password reset request</h2>
+                <p>You requested a password reset for your account.</p>
+                <p>
+                    <a href="${resetLink}" style="display: inline-block; background: #059669; color: #fff; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600;">
+                        Reset Password
+                    </a>
+                </p>
+                <p>If the button does not work, copy and paste this link into your browser:</p>
+                <p style="word-break: break-all; color: #0f172a;">${resetLink}</p>
+                <p>This link expires in 1 hour.</p>
+            </div>
+        `,
+    });
+};
 
 // Registers a brand new user. Always forces role "user" and isActive true —
 // the client can never assign themselves the admin role here, no matter
@@ -116,10 +163,26 @@ export const forgotPassword = async (email) => {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3001";
     const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
+    try {
+        await sendPasswordResetEmail(user.email, resetLink);
+    } catch (error) {
+        const mailError = new Error("Unable to send password reset email right now. Please try again later.");
+        mailError.statusCode = error.statusCode || 500;
+        throw mailError;
+    }
+
+    const includeResetLinkInResponse = process.env.SEND_RESET_LINK_IN_RESPONSE === "true";
+
+    if (includeResetLinkInResponse) {
+        return {
+            message: "Password reset link generated and sent successfully.",
+            resetToken,
+            resetLink,
+        };
+    }
+
     return {
-        message: "Password reset link generated successfully. In production this link would be sent to the user's email.",
-        resetToken,
-        resetLink,
+        message: "If an account exists for this email, a password reset link has been sent.",
     };
 };
 
