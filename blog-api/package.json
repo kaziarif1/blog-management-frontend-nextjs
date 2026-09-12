@@ -1,0 +1,33 @@
+{
+  "name": "blog-api",
+  "version": "1.0.0",
+  "description": "Blog Management REST API with Admin/User/Guest roles, built with Express, Sequelize and MySQL",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "create-admin": "node utils/createAdmin.js"
+  },
+  "keywords": [
+    "express",
+    "sequelize",
+    "mysql",
+    "jwt",
+    "rest-api"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
+    "mysql2": "^3.23.3",
+    "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
