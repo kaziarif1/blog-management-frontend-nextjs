@@ -113,9 +113,13 @@ export const forgotPassword = async (email) => {
         { expiresIn: "1h" }
     );
 
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3001";
+    const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
+
     return {
-        message: "Password reset link generated successfully",
+        message: "Password reset link generated successfully. In production this link would be sent to the user's email.",
         resetToken,
+        resetLink,
     };
 };
 

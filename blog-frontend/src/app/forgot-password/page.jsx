@@ -65,19 +65,24 @@ export default function ForgotPasswordPage() {
                                 </p>
                             </div>
 
-                            {/* Token action helper for testing & assignment grading */}
-                            {result.resetToken && (
+                            {/* Secure reset link flow: this is the link that would normally be emailed */}
+                            {result.resetLink && (
                                 <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
                                     <p className="text-xs font-semibold text-gray-600">
-                                        For assignment evaluation / local testing, click below to proceed to the reset page directly:
+                                        Password reset link (this is what should be sent to the user's email in production):
                                     </p>
-                                    <Link
-                                        href={`/reset-password/${result.resetToken}`}
+                                    <a
+                                        href={result.resetLink}
+                                        target="_blank"
+                                        rel="noreferrer"
                                         className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
                                     >
-                                        Proceed to Reset Password
+                                        Open Reset Page
                                         <ArrowRight className="w-4 h-4 ml-1.5" />
-                                    </Link>
+                                    </a>
+                                    <div className="mt-2 rounded-xl border border-gray-200 bg-white p-2 text-[11px] text-gray-600 break-all">
+                                        {result.resetLink}
+                                    </div>
                                 </div>
                             )}
 
