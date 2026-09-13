@@ -1,292 +1,195 @@
-<<<<<<< HEAD
-# blog-management-frontend-nextjs
-A responsive Blog Management frontend built with Next.js and Tailwind CSS, integrated with a REST API for authentication, blog management, user management, search, filtering, and role-based access control.
-=======
-# Blog Management REST API
+# BlogHub — Blog Management Application
 
-A secure REST API for a blog management application, developed for the **API Development Assignment**. The application supports **Guest**, **User**, and **Admin** access levels, with JWT authentication, role-based authorization, user management, blog management, search, and filtering.
+A full-stack blog platform built for the **Batch 19 Frontend Development Assignment: Blog Management Application with Next.js**. The project pairs a responsive Next.js frontend with an Express, MySQL, and Sequelize REST API. It supports public blog discovery, authenticated author workflows, and administrator user management.
 
-**Author:** Kazi Abu Jafor Arif  
-**Batch:** 19 SDET  
-**Database:** MySQL  
-**API testing:** Postman
+The frontend was added to the existing backend project and consumes the REST API for all application data—there are no mock users, hard-coded blog lists, frontend-only authentication, or direct database calls from the UI.
+
+**Repository:** [kaziarif1/blog-management-application](https://github.com/kaziarif1/blog-management-application)
 
 ## Features
 
-- User registration and login with JWT authentication
-- Password hashing with bcrypt; passwords are never exposed in responses
-- Role-based access control for users and admins
-- Admin user listing, individual user lookup, and account activation control
-- Authenticated profile and password management
-- Blog creation, update, and deletion with author-ownership rules
-- Public blog listing, detail lookup, title search, and category filtering
-- Input validation and meaningful HTTP error responses
-- Sequelize-managed MySQL models and user-to-blog relationship
+### Guest experience
 
-## Access Levels
+- Browse published blogs and open individual blog-detail pages.
+- Search blogs by title and filter them by category; both filters can be used together.
+- Register, log in, request a password-reset link, and reset a password from the email token URL.
 
-| Feature | Guest | User | Admin |
-| --- | :---: | :---: | :---: |
-| Register and log in | Yes | Yes | Yes |
-| View, search, and filter blogs | Yes | Yes | Yes |
-| Create a blog | No | Yes | Yes |
-| Update or delete own blog | No | Yes | Yes |
-| Update or delete another user's blog | No | No | Yes |
-| View/update own profile and password | No | Yes | Yes |
-| View users and manage account status | No | No | Yes |
+### Authenticated user experience
+
+- Persistent JWT-backed session with automatic profile loading and protected-route redirects.
+- Dashboard with profile summary, blog statistics, recent posts, and a quick-create action.
+- Create, view, edit, and delete owned blogs, with confirmation before deletion.
+- Update first and last name, upload a profile image, and change password.
+- Responsive dashboard navigation, fixed top navigation, profile/avatar menu, loading states, alerts, validation, and empty states.
+
+### Administrator experience
+
+- See all blogs and edit or delete any user's blog, as authorized by the API.
+- View users, inspect user details, and activate or deactivate accounts.
+- Admin-only navigation and client-side route guarding, backed by API authorization.
 
 ## Tech Stack
 
-- Node.js and Express 5 (ES modules)
-- MySQL and Sequelize ORM
-- JSON Web Tokens (`jsonwebtoken`)
-- bcrypt
-- dotenv and cors
-- Postman
+| Area | Technologies |
+| --- | --- |
+| Frontend | Next.js 14 (App Router), React 18, Tailwind CSS, Lucide React |
+| Backend | Node.js, Express 5, Sequelize |
+| Database | MySQL |
+| Security | JWT, bcrypt, role-based authorization |
+| Uploads & email | Multer, Nodemailer |
+| API testing | Postman |
 
 ## Project Structure
 
 ```text
-blog-management-rest-api-main/
-├── blog-api/                 # Express REST API (source of truth)
-└── blog-frontend/            # Next.js + Tailwind frontend
-```
-
-### Backend
-
-```text
-blog-api/
-├── app.js                    # Express configuration and routes
-├── server.js                 # Database startup and HTTP server
-├── config/db.js              # Sequelize/MySQL configuration
-├── controller/               # HTTP request handlers
-├── services/                 # Business logic and validation
-├── models/                   # User and Blog Sequelize models
-├── middlewares/              # JWT, admin-role, and image-upload middleware
-├── routes/                   # API route definitions
-├── utils/                    # Validation and admin helper utilities
-├── uploads/                  # Stored profile images
-├── postman/                  # Importable Postman collection
-├── .env.example
-└── package.json
+blog-management-application/
+├── blog-api/                    # Existing Express REST API
+│   ├── controller/               # Auth, user, and blog controllers
+│   ├── middlewares/              # JWT, admin, and image-upload middleware
+│   ├── models/                   # Sequelize User and Blog models
+│   ├── routes/                   # REST API endpoints
+│   ├── services/                 # Business logic
+│   └── postman/                  # Importable API collection
+├── blog-frontend/                # Next.js + Tailwind frontend
+│   └── src/
+│       ├── app/                  # App Router pages and layouts
+│       ├── components/           # Reusable UI components
+│       ├── contexts/             # Authentication state
+│       ├── services/             # Auth, user, and blog API services
+│       └── utils/                # API client, auth, and formatters
+├── screenshot/                   # Application screenshots
+└── Blog-Management-API.postman_collection.json
 ```
 
 ## Prerequisites
 
 - Node.js 18 or newer
-- MySQL server
 - npm
+- MySQL server
 
 ## Installation and Setup
 
-This repository contains the REST API (`blog-api`) and the Next.js frontend (`blog-frontend`).
-
-### Backend
-
-1. Open the API directory.
+1. Clone the repository and install the backend dependencies.
 
    ```bash
-   cd blog-api
+   git clone https://github.com/kaziarif1/blog-management-application.git
+   cd blog-management-application/blog-api
    npm install
    ```
 
-2. Create the MySQL database.
+2. Create the database.
 
    ```sql
    CREATE DATABASE blogdb;
    ```
 
-3. Copy `.env.example` to `.env`, then set the values for your local MySQL instance and JWT secret.
+3. Copy `blog-api/.env.example` to `blog-api/.env`, then provide your database credentials, JWT secret, frontend URL, and SMTP details if you want password-reset emails.
 
    ```env
    PORT=5000
-
    DB_HOST=localhost
    DB_PORT=3306
    DB_USER=root
    DB_PASSWORD=your_password
    DB_NAME=blogdb
-
-   SECRET_KEY=your_secret_key
+   SECRET_KEY=replace_with_a_secure_secret
+   FRONTEND_URL=http://localhost:3000
    ```
 
-4. Start the API.
+4. Start the backend.
 
    ```bash
    npm run dev
-   # or
-   npm start
    ```
 
-The server runs at `http://localhost:5000` by default. On startup, Sequelize synchronizes the `users` and `blogs` tables. The database itself must be created first.
-
-### Frontend
-
-1. Open a second terminal.
+5. In another terminal, install and configure the frontend.
 
    ```bash
-   cd blog-frontend
+   cd blog-management-application/blog-frontend
    npm install
    copy .env.example .env.local
+   ```
+
+   On macOS/Linux, use `cp .env.example .env.local` instead of `copy`.
+
+6. Confirm `blog-frontend/.env.local` contains the API and upload-server URLs, then start Next.js.
+
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:5000/api
+   NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
+   ```
+
+   ```bash
    npm run dev
    ```
 
-2. Open [http://localhost:3000](http://localhost:3000). The frontend calls `http://localhost:5000/api`.
+Open [http://localhost:3000](http://localhost:3000). The frontend depends on the API running at `http://localhost:5000` by default. `NEXT_PUBLIC_BACKEND_URL` is used to resolve profile images served from `/uploads`.
 
-Required frontend environment variables:
+> Do not commit `.env` or `.env.local`; use the provided `.env.example` files as templates.
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
-```
+## Application Routes
 
-## Database Model
+| Route | Access | Description |
+| --- | --- | --- |
+| `/` | Public | Blog list with title search and category filter |
+| `/blogs/[id]` | Public | Blog detail page |
+| `/register` | Public | Account registration |
+| `/login` | Public | Login and password-reset entry point |
+| `/forgot-password` | Public | Password-reset email request |
+| `/reset-password/[token]` | Public | Reset password with email token |
+| `/dashboard` | User/Admin | Dashboard overview |
+| `/dashboard/blogs` | User/Admin | User's blogs or all blogs for an admin |
+| `/dashboard/blogs/create` | User/Admin | Create a blog |
+| `/dashboard/blogs/[id]/edit` | User/Admin | Edit an authorized blog |
+| `/dashboard/profile` | User/Admin | View/edit profile and upload avatar |
+| `/dashboard/change-password` | User/Admin | Change account password |
+| `/admin/users` | Admin | User details and account-status management |
 
-The API uses two tables:
+## API Integration
 
-```text
-users (1) ──────< blogs (*)
-```
+All UI data is fetched through reusable services in `blog-frontend/src/services`. The shared client adds `Authorization: Bearer <token>` to authenticated requests and translates common backend errors into clear messages.
 
-Each blog belongs to one registered user through `blogs.userId`. Sequelize maps record timestamps to `createAt` and `updateAt`.
-
-| Table | Important fields |
+| Domain | Endpoints used |
 | --- | --- |
-| `users` | `id`, `firstname`, `lastname`, `email`, `password`, `isActive`, `role`, `createAt`, `updateAt` |
-| `blogs` | `id`, `userId`, `blogTitle`, `blog`, `category`, `createAt`, `updateAt` |
+| Authentication | `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/forgot-password`, `PATCH /api/auth/reset-password/:token` |
+| Profile | `GET /api/users/profile`, `PUT /api/users/profile/update`, `PATCH /api/users/profile/image`, `PATCH /api/users/password` |
+| Blogs | `GET /api/blogs`, `GET /api/blogs/:id`, `POST /api/blogs/create`, `PUT /api/blogs/update/:id`, `DELETE /api/blogs/delete/:id` |
+| Admin users | `GET /api/users`, `GET /api/users/:id`, `PATCH /api/users/:id/status` |
 
-New users are active by default and always receive the `user` role. Registration never accepts a client-supplied admin role.
-
-## Creating an Admin
-
-Use the included helper to create an admin or promote an existing user:
-
-```bash
-npm run create-admin -- admin@example.com password123 Admin User
-```
-
-The helper promotes the matching existing user, or creates a new active admin account when the email is not yet registered.
-
-## Authentication
-
-Log in through `POST /api/auth/login` and send the returned token on protected endpoints:
+The public blog endpoint supports combined queries such as:
 
 ```http
-Authorization: Bearer <token>
-```
-
-Inactive users cannot log in. A normal user can manage only their own blogs, while an admin can manage every blog.
-
-## API Endpoints
-
-Base URL: `http://localhost:5000`
-
-| # | Method | Endpoint | Access | Purpose |
-| --- | --- | --- | --- | --- |
-| 1 | POST | `/api/auth/register` | Public | Register a user |
-| 2 | POST | `/api/auth/login` | Public | Log in and receive a JWT |
-| 3 | GET | `/api/users` | Admin | List all users |
-| 4 | GET | `/api/users/:id` | Admin | Get one user |
-| 5 | PATCH | `/api/users/:id/status` | Admin | Activate or deactivate a user |
-| 6 | GET | `/api/users/profile` | User/Admin | Get the authenticated profile |
-| 7 | PUT | `/api/users/profile/update` | User/Admin | Update own first and last name |
-| 8 | PATCH | `/api/users/password` | User/Admin | Update own password |
-| 9 | POST | `/api/blogs/create` | User/Admin | Create a blog |
-| 10 | GET | `/api/blogs` | Public | List, search, or filter blogs |
-| 11 | GET | `/api/blogs/:id` | Public | Get a blog by ID |
-| 12 | PUT | `/api/blogs/update/:id` | User/Admin | Update an owned blog or any blog as admin |
-| 13 | DELETE | `/api/blogs/delete/:id` | User/Admin | Delete an owned blog or any blog as admin |
-
-`DELETE /api/blogs/:id` is also supported as an alternative delete route.
-
-### Blog Search and Filtering
-
-Blog listing is public and includes safe author information (`id`, `firstname`, and `lastname`). It supports partial title matching and category filtering:
-
-```http
-GET /api/blogs?title=playwright
-GET /api/blogs?category=Testing
 GET /api/blogs?title=playwright&category=Testing
 ```
 
-## Example Requests
+## Access Control
 
-### Register a user
+| Capability | Guest | User | Admin |
+| --- | :---: | :---: | :---: |
+| Browse, search, and filter blogs | Yes | Yes | Yes |
+| Register, log in, and reset password | Yes | Yes | Yes |
+| Create a blog | No | Yes | Yes |
+| Update/delete own blogs | No | Yes | Yes |
+| Update/delete another user's blogs | No | No | Yes |
+| Manage own profile, avatar, and password | No | Yes | Yes |
+| View users and change account status | No | No | Yes |
 
-```http
-POST /api/auth/register
-Content-Type: application/json
+New blog requests never send a `userId`; the API derives ownership from the JWT. The backend remains the source of truth for authorization, including 401 and 403 responses.
 
-{
-  "firstname": "John",
-  "lastname": "Doe",
-  "email": "john@example.com",
-  "password": "password123"
-}
-```
+## Screenshots
 
-### Log in
-
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "john@example.com",
-  "password": "password123"
-}
-```
-
-### Create a blog
-
-```http
-POST /api/blogs/create
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "blogTitle": "Introduction to API Testing",
-  "blog": "This article explains the fundamentals of API testing.",
-  "category": "Testing"
-}
-```
-
-The blog owner is derived from the token; clients do not submit `userId`.
-
-### Update user status (admin only)
-
-```http
-PATCH /api/users/2/status
-Authorization: Bearer <admin-token>
-Content-Type: application/json
-
-{
-  "isActive": false
-}
-```
-
-## Validation, Security, and Status Codes
-
-The API validates required fields, email format, minimum password length, boolean account status, and numeric resource IDs. It uses these common status codes:
-
-| Status | Meaning |
+| Dashboard | Blog management |
 | --- | --- |
-| `200` | Successful request |
-| `201` | Resource created |
-| `400` | Invalid request data or credentials |
-| `401` | Missing, invalid, expired, or inactive authentication |
-| `403` | Authenticated but not authorized |
-| `404` | Route or resource not found |
-| `409` | Email already registered |
-| `500` | Unexpected server error |
+| ![Dashboard](screenshot/dashboard.png) | ![My blogs](screenshot/my%20blogs.png) |
+| Blog detail | Profile management |
+| ![Blog detail](screenshot/blog%20view.png) | ![Profile management](screenshot/my%20profile.png) |
+| Admin user management | Mobile layout |
+| ![Admin user management](screenshot/all%20users%20by%20admin.png) | ![Mobile layout](screenshot/mobile%20view.png) |
 
-Passwords are hashed before storage and are excluded from all API responses. Keep real credentials in `.env`; it is ignored by Git and must not be committed.
+## Postman Collection
 
-## Postman
+Import [Blog-Management-API.postman_collection.json](Blog-Management-API.postman_collection.json) into Postman to test authentication, authorization, profile management, blog CRUD, search/filtering, and admin workflows.
 
-Import [postman/Blog-Management-API.postman_collection.json](postman/Blog-Management-API.postman_collection.json) into Postman to exercise authentication, authorization, user management, blog CRUD, search/filtering, and error scenarios.
+## Author
 
-You can also use the shared [Postman collection](https://kajarif02-5863647.postman.co/workspace/Kazi-Abu-Jafor-Arif's-Workspace~551c39eb-65ea-4f48-889f-094493878cfa/collection/56978012-2ec1c297-d8b7-41cf-b1af-bb7b934275ea?action=share&creator=56978012).
-
-
->>>>>>> 7bdd907 (Initial project setup)
+Kazi Abu Jafor Arif — Batch 19, SDET
